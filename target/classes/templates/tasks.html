@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+</head>
+<body>
+<div th:each="tasks : ${userTasks}">
+    <a th:text="${tasks.getDescription() + ', ' + tasks.getDay()}">Task</a>
+    <br/>
+</div>
+
+<br/>
+<a th:href="@{/tasks/add}">Добавить задачу</a>
+<br/>
+<br/>
+<a th:href="@{/tasks/delete}">Удалить задачу</a>
+<br/>
+<br/>
+<a th:href="@{/tasks/update}">Обновить задачу</a>
+</body>
+</html>

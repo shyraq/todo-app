@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete</title>
+</head>
+<body>
+<form th:method="DELETE" th:action="@{/tasks/delete}" th:object="${tasks}">
+    <label for="task">Удалить задачу: </label>
+    <select th:object="${tasks}" th:field="*{id}" id="task">
+        <option th:each="tasks : ${userTasks}" th:value="${tasks.getId()}"
+                th:text="${tasks.getDescription()}"></option>
+    </select>
+
+    <input type="submit" value="Удалить задачу" />
+</form>
+</body>
+</html>

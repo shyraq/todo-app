@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update task</title>
+</head>
+<body>
+<form th:method="post" th:action="@{/tasks/process_update}" th:object="${tasks}">
+    <label for="task">Изменить задачу: </label>
+    <select th:object="${tasks}" th:field="*{id}" id="task">
+        <option th:each="tasks : ${userTasks}" th:value="${tasks.getId()}"
+                th:text="${tasks.getDescription()}"></option>
+    </select>
+
+    <input type="submit" value="Изменить задачу" />
+</form>
+</body>
+</html>
