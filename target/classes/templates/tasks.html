@@ -7,16 +7,17 @@
 <body>
 <div th:each="tasks : ${userTasks}">
     <a th:text="${tasks.getDescription() + ', ' + tasks.getDay()}">Task</a>
+    <a th:if="${tasks.isCompleted()}">✓</a>
     <br/>
+    <a th:if="${!tasks.isCompleted()}" th:href="@{/tasks/completed/{id}(id = ${tasks.getId()})}">Выполнить</a>
+    <a th:href="@{/tasks/delete/{id}(id = ${tasks.getId()})}">Удалить задачу</a>
+    <a th:href="@{/tasks/process_update/{id}(id = ${tasks.getId()})}">Обновить задачу</a>
 </div>
 
 <br/>
 <a th:href="@{/tasks/add}">Добавить задачу</a>
 <br/>
 <br/>
-<a th:href="@{/tasks/delete}">Удалить задачу</a>
-<br/>
-<br/>
-<a th:href="@{/tasks/update}">Обновить задачу</a>
+
 </body>
 </html>

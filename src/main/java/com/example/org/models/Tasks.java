@@ -30,6 +30,9 @@ public class Tasks {
     @Column(name = "added_at")
     private LocalDateTime addedAt;
 
+    @Column(name = "completed")
+    private boolean completed;
+
     public Tasks(String description, String day) {
         this.description = description;
         this.day = day;
@@ -79,5 +82,11 @@ public class Tasks {
         this.addedAt = addedAt;
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
 
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 }

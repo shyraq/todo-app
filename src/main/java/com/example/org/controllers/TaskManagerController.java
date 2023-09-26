@@ -55,31 +55,29 @@ public class TaskManagerController {
         return "redirect:/tasks";
     }
 
-    @GetMapping("/delete")
-    public String deleteTasks(Model model, @ModelAttribute ("tasks") Tasks tasks) throws Exception {
-        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
-        return "delete";
-    }
+//    @GetMapping("/delete")
+//    public String deleteTasks(Model model, @ModelAttribute ("tasks") Tasks tasks) throws Exception {
+//        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
+//        return "delete";
+//    }
 
-    @DeleteMapping("/delete")
-    public String submitDelete(@ModelAttribute ("task") Tasks task){
-
-        taskService.deleteTaskById(task.getId());
-
+    @GetMapping("/delete/{id}")
+    public String submitDelete(@PathVariable ("id") int id){
+        taskService.deleteTaskById(id);
         return "redirect:/tasks";
     }
 
-    @GetMapping("/update")
-    public String updateTask(Model model) throws Exception {
-        model.addAttribute("tasks", new Tasks());
-        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
-        return "update";
-    }
+//    @GetMapping("/update")
+//    public String updateTask(Model model) throws Exception {
+//        model.addAttribute("tasks", new Tasks());
+//        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
+//        return "update";
+//    }
 
 
-    @PostMapping("/process_update")
-    public String updatePage(Model model, @ModelAttribute ("tasks") Tasks tasks) throws Exception {
-        model.addAttribute("task",taskService.findById(tasks.getId()));
+    @GetMapping("/process_update/{id}")
+    public String updatePage(Model model, @PathVariable ("id") int id) throws Exception {
+        model.addAttribute("task",taskService.findById(id));
         return "updatePage";
     }
 
@@ -90,6 +88,13 @@ public class TaskManagerController {
         if(result.hasErrors())
             return "updatePage";
         taskService.saveTask(tasks, findByContext());
+
+        return "redirect:/tasks";
+    }
+
+    @GetMapping ("/completed/{id}")
+    public String completeTask(@PathVariable ("id") int id) throws Exception {
+        taskService.setCompleted(id);
 
         return "redirect:/tasks";
     }

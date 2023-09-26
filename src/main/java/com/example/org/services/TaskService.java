@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +28,22 @@ public class TaskService {
         taskRepo.save(task);
     }
 
+    public void setCompleted(int id) throws Exception {
+        Optional<Tasks> tasks = taskRepo.findById(id);
+        if(tasks.isPresent()){
+            Tasks presentTasks = tasks.get();
+            presentTasks.setCompleted(true);
+            taskRepo.save(presentTasks);
+        }else{
+            throw new Exception("Task not found!");
+        }
+    }
+
 
     public List<Tasks> getTasks(User user) {
-        return taskRepo.getAllByUser(user);
+        List<Tasks> tasksList = taskRepo.getAllByUser(user);
+        tasksList.sort(Comparator.comparingInt(Tasks::getId));
+        return tasksList;
     }
 
     public void deleteTaskById(int id){
