@@ -22,6 +22,13 @@ public class UserService {
 
     public Optional<User> findByUsername(String username){
         return userRepo.findByUsername(username);
+    }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+
+    public Optional<User> findByPassword(String password) {
+        return userRepo.findByPassword(password);
     }
 }

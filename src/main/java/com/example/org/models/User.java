@@ -20,8 +20,13 @@ public class User {
     @NotNull(message = "Пароль не должен быть пустым!")
     private String password;
 
-    public User(String username, String password) {
+    @Column(name = "email")
+    @NotNull(message = "Email не должен быть пустым!")
+    private String email;
+
+    public User(String username, String email, String password) {
         this.username = username;
+        this.email = email;
         this.password = password;
     }
 
@@ -51,5 +56,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

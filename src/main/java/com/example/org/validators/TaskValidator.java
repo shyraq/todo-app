@@ -25,8 +25,16 @@ public class TaskValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Tasks task = (Tasks)target;
 
-        if(validator.validate(task.getDay()))
-            return;
-        errors.rejectValue("day", "", "Дата должна соблюдать вид(ДД/ММ/ГГГГ)");
+        if(!validator.validate(task.getDay())) {
+            if (task.getDay().isEmpty()) {
+                errors.rejectValue("day", "", "Дата не должна быть пустой!");
+            }else {
+                errors.rejectValue("day", "", "Дата должна соблюдать вид(ДД/ММ/ГГГГ)!");
+            }
+        }
+
+        if(task.getDescription().isEmpty()){
+            errors.rejectValue("description", "", "Цель не должна быть пустой!");
+        }
     }
 }

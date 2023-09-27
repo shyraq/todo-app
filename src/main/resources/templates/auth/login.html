@@ -9,16 +9,16 @@
 <form name="f"  method="post" action="/process_login">
 <!--    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
 
-    <label for="username">Введите имя пользователя:</label>
+    <label for="username">Введите имя :</label>
     <input type="text" name="username" id="username"/>
     <br/>
-    <label for="password">Введите пароль пользователя:</label>
-    <input type="password" name="password" id="password">
+    <label for="password">Введите пароль:</label>
+    <input type="password" name="password" id="password"/>
     <br/>
     <input type="submit" value="Login"/>
 
     <div th:if="${param.error}" style="color: red">
-        Неправильное имя или пароль
+        Неправильный Email или пароль!
     </div>
 
 </form>
