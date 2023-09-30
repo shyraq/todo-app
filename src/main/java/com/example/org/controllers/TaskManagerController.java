@@ -1,21 +1,15 @@
 package com.example.org.controllers;
 
 import com.example.org.models.Tasks;
-import com.example.org.models.User;
 import com.example.org.services.TaskService;
 import com.example.org.services.UserService;
 import com.example.org.validators.TaskValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/tasks")
@@ -34,7 +28,7 @@ public class TaskManagerController {
 
     @GetMapping()
     public String getTasks(Model model) throws Exception {
-        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
+        model.addAttribute("userTasks", taskService.getTasks(userService.findByContext()));
         return "tasks";
     }
 
@@ -50,7 +44,7 @@ public class TaskManagerController {
         if (result.hasErrors())
             return "add";
 
-        taskService.saveTask(task, findByContext());
+        taskService.saveTask(task, userService.findByContext());
 
         return "redirect:/tasks";
     }
@@ -70,7 +64,7 @@ public class TaskManagerController {
 //    @GetMapping("/update")
 //    public String updateTask(Model model) throws Exception {
 //        model.addAttribute("tasks", new Tasks());
-//        model.addAttribute("userTasks", taskService.getTasks(findByContext()));
+//        model.addAttribute("userTasks", taskService.getTasks(userService.findByContext()));
 //        return "update";
 //    }
 
@@ -87,7 +81,7 @@ public class TaskManagerController {
 
         if(result.hasErrors())
             return "updatePage";
-        taskService.saveTask(tasks, findByContext());
+        taskService.saveTask(tasks, userService.findByContext());
 
         return "redirect:/tasks";
     }
@@ -95,19 +89,8 @@ public class TaskManagerController {
     @GetMapping ("/completed/{id}")
     public String completeTask(@PathVariable ("id") int id) throws Exception {
         taskService.setCompleted(id);
+        userService.addCompletedTask(userService.findByContext());
 
         return "redirect:/tasks";
-    }
-
-    public User findByContext() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        String username = userDetails.getUsername();
-        Optional<User> user = userService.findByUsername(username);
-
-        if (user.isPresent())
-            return user.get();
-        throw new Exception("User not found");
     }
 }

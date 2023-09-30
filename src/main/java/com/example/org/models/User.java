@@ -24,6 +24,9 @@ public class User {
     @NotNull(message = "Email не должен быть пустым!")
     private String email;
 
+    @Column(name = "completedtasks")
+    private int completedTasks;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
@@ -64,5 +67,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getCompletedTasks() {
+        return completedTasks;
+    }
+
+    public void setCompletedTasks(int completedTasks) {
+        this.completedTasks = completedTasks;
     }
 }

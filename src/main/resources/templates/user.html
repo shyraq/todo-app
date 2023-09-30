@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<a th:text="${'Здравствуйте, ' + user.getUsername() + ' , за все время вы выполнили ' + user.getCompletedTasks() + ' задач'}">User</a>
+<br/>
+<br/>
+<a href="/tasks">Посмотреть задачи</a>
+<a href="/logout">Выйти</a>
+</body>
+</html>
