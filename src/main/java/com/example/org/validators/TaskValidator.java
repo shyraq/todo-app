@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDateTime;
+
 @Component
 public class TaskValidator implements Validator {
 
@@ -24,12 +26,22 @@ public class TaskValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Tasks task = (Tasks)target;
+        int monthId = task.getMonth().getId();
+        StringBuilder monthIdStr = new StringBuilder();
 
-        if(!validator.validate(task.getDay())) {
+
+        if(monthId < 10){
+            monthIdStr.append("0").append(monthId);
+        }else {
+            monthIdStr.append(monthId);
+        }
+
+        if(!validator.validate(task.getDay() + "/" + monthIdStr + "/" + LocalDateTime.now().getYear())) {
             if (task.getDay().isEmpty()) {
-                errors.rejectValue("day", "", "Дата не должна быть пустой!");
-            }else {
-                errors.rejectValue("day", "", "Дата должна соблюдать вид(ДД/ММ/ГГГГ)!");
+                errors.rejectValue("day", "", "День не должен быть пустой!");
+            }
+            else {
+                errors.rejectValue("day", "", "Дата должна соответствовать месяцу!");
             }
         }
 

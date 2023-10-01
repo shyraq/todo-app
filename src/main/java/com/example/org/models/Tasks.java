@@ -20,7 +20,7 @@ public class Tasks {
     private String description;
 
     @Column(name = "day")
-    @NotNull(message = "Дата не должна быть пустой!")
+    @NotNull(message = "День не должна быть пустой!")
     private String day;
 
     @ManyToOne
@@ -32,6 +32,13 @@ public class Tasks {
 
     @Column(name = "completed")
     private boolean completed;
+
+    @JoinColumn(name = "month", referencedColumnName = "month")
+    @ManyToOne
+    private Month month;
+
+    @Column(name = "year")
+    private String year;
 
     public Tasks(String description, String day) {
         this.description = description;
@@ -88,5 +95,21 @@ public class Tasks {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public Month getMonth() {
+        return month;
+    }
+
+    public void setMonth(Month month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 }

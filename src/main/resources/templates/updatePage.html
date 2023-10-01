@@ -9,13 +9,20 @@
     <input type="hidden" th:field="*{id}" id="id">
     <input type="hidden" th:field="*{completed}" id="id">
     <label for="description">Введите цель:</label>
-    <input type="text" th:field="*{description}" id="description" />
+    <input type="text" th:object="${task}" th:field="*{description}" id="description" />
     <div style="color: #ff0000" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description errors</div>
     <br/>
 
     <label for="day">Введите день когда надо выполнить цель(ДД/ММ/ГГГГ):</label>
-    <input type="text" th:field="*{day}" id="day">
+    <input type="text" th:object="${task}" th:field="*{day}" id="day">
     <div style="color: #ff0000" th:if="${#fields.hasErrors('day')}" th:errors="*{day}">Day errors</div>
+    <br/>
+
+    <label for="month">Выберите месяц когда надо выполнить цель: </label>
+    <select th:object="${month}" th:field="*{id}" id="month">
+        <option th:each="month : ${months}" th:value="${month.getId()}"
+                th:text="${month.getMonth()}"></option>
+    </select>
     <br/>
 
     <input type="submit" value="Изменить задачу">

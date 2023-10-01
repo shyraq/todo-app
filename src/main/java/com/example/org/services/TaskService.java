@@ -60,5 +60,6 @@ public class TaskService {
     public void fillTask(Tasks tasks, User user){
         tasks.setAddedAt(LocalDateTime.now());
         tasks.setUser(user);
+        tasks.setYear(Integer.toString(LocalDateTime.now().getYear()));
     }
 }

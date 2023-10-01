@@ -6,7 +6,7 @@
 </head>
 <body>
 <div th:each="tasks : ${userTasks}">
-    <a th:text="${tasks.getDescription() + ', ' + tasks.getDay()}">Task</a>
+    <a th:text="${tasks.getDescription() + ', ' + tasks.getDay() + ', ' + tasks.getMonth()}">Task</a>
     <a th:if="${tasks.isCompleted()}">✓</a>
     <br/>
     <a th:if="${!tasks.isCompleted()}" th:href="@{/tasks/completed/{id}(id = ${tasks.getId()})}">Выполнить</a>
