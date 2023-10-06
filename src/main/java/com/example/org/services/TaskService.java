@@ -28,6 +28,12 @@ public class TaskService {
         taskRepo.save(task);
     }
 
+    public void updateTask(Tasks tasks, User user){
+        tasks.setUser(user);
+        tasks.setAddedAt(taskRepo.findById(tasks.getId()).get().getAddedAt());
+        taskRepo.save(tasks);
+    }
+
     public void setCompleted(int id) throws Exception {
         Optional<Tasks> tasks = taskRepo.findById(id);
         if(tasks.isPresent()){

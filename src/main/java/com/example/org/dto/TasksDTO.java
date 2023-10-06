@@ -1,62 +1,41 @@
-package com.example.org.models;
+package com.example.org.dto;
 
-import jakarta.persistence.*;
+import com.example.org.models.Month;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
 
 
-@Entity
-@Table(name = "task")
-public class Tasks {
+public class TasksDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    @Column(name = "description")
     @NotNull(message = "Задача не должна быть пустой!")
     private String description;
 
-    @Column(name = "day")
+
     @NotNull(message = "День не должна быть пустой!")
     private String day;
 
-    @ManyToOne
-    @JoinColumn(name = "creator", referencedColumnName = "username")
-    private User user;
-
-    @Column(name = "added_at")
-    private LocalDateTime addedAt;
-
-    @Column(name = "completed")
-    private boolean completed;
-
-    @JoinColumn(name = "month", referencedColumnName = "month")
-    @ManyToOne
-    private Month month;
-
-    @Column(name = "year")
+    @NotNull
     private String year;
 
-    public Tasks(String description, String day, Month month) {
+
+    private boolean completed;
+
+    private Month month;
+
+
+    public TasksDTO(String description, String day, Month month, String year) {
         this.description = description;
         this.day = day;
         this.month = month;
+        this.year = year;
     }
 
-    public Tasks() {
+    public TasksDTO() {
 
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getDescription() {
         return description;
@@ -74,22 +53,6 @@ public class Tasks {
         this.day = day;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getAddedAt() {
-        return addedAt;
-    }
-
-    public void setAddedAt(LocalDateTime addedAt) {
-        this.addedAt = addedAt;
-    }
-
     public boolean isCompleted() {
         return completed;
     }
@@ -104,6 +67,14 @@ public class Tasks {
 
     public void setMonth(Month month) {
         this.month = month;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getYear() {

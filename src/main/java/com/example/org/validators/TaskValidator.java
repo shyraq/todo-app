@@ -36,12 +36,15 @@ public class TaskValidator implements Validator {
             monthIdStr.append(monthId);
         }
 
-        if(!validator.validate(task.getDay() + "/" + monthIdStr + "/" + LocalDateTime.now().getYear())) {
+        if(!validator.validate(task.getDay() + "/" + monthIdStr + "/" + task.getYear())) {
             if (task.getDay().isEmpty()) {
-                errors.rejectValue("day", "", "День не должен быть пустой!");
+                errors.rejectValue("day", "invalidDate", "День не должен быть пустой!");
             }
             else {
-                errors.rejectValue("day", "", "Дата должна соответствовать месяцу!");
+                errors.rejectValue("day", "invalidDate", "Дата должна соответствовать месяцу!");
+            }
+            if(Integer.parseInt(task.getYear()) < LocalDateTime.now().getYear()){
+                errors.rejectValue("year", "invalidYear", "Год должен быть текущим или следующим");
             }
         }
 

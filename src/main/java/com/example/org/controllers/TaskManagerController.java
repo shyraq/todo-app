@@ -1,5 +1,7 @@
 package com.example.org.controllers;
 
+import com.example.org.dto.MonthDTO;
+import com.example.org.dto.TasksDTO;
 import com.example.org.models.Month;
 import com.example.org.models.Tasks;
 import com.example.org.services.MonthService;
@@ -8,11 +10,14 @@ import com.example.org.services.UserService;
 import com.example.org.validators.MonthValidator;
 import com.example.org.validators.TaskValidator;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tasks")
@@ -23,14 +28,16 @@ public class TaskManagerController {
     private final TaskValidator taskValidator;
     private final MonthService monthService;
     private final MonthValidator monthValidator;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public TaskManagerController(TaskService taskService, UserService userService, TaskValidator taskValidator, MonthService monthService, MonthValidator monthValidator) {
+    public TaskManagerController(TaskService taskService, UserService userService, TaskValidator taskValidator, MonthService monthService, MonthValidator monthValidator, ModelMapper modelMapper) {
         this.taskService = taskService;
         this.userService = userService;
         this.taskValidator = taskValidator;
         this.monthService = monthService;
         this.monthValidator = monthValidator;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
@@ -40,27 +47,28 @@ public class TaskManagerController {
     }
 
     @GetMapping("/add")
-    public String addTask(@ModelAttribute ("task") Tasks task, Model model) {
-        model.addAttribute("months", monthService.getAll());
-        model.addAttribute("month", new Month());
+    public String addTask(Model model) {
+        model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
+        model.addAttribute("month", new MonthDTO());
+        model.addAttribute("tasks", new TasksDTO());
         return "add";
     }
 
     @PostMapping("/add")
-    public String submitTask(@ModelAttribute ("task") @Valid Tasks task,
-                             @ModelAttribute ("month") Month monthWithId, Model model,
+    public String submitTask(@ModelAttribute ("tasks") @Valid TasksDTO tasksDTO,
+                             @ModelAttribute ("month") @Valid MonthDTO monthDTOWithId, Model model,
                              BindingResult result) throws Exception {
-        Month month = monthService.findById(monthWithId.getId());
-        task.setMonth(month);
-        taskValidator.validate(task, result);
+        Tasks tasks = convertToTasks(tasksDTO);
+        Month month = convertToMonth(monthDTOWithId);
+        monthValidator.validate(month, result);
+        tasks.setMonth(month);
+        taskValidator.validate(tasks, result);
 
         if (result.hasErrors()) {
-            model.addAttribute("task", task);
-            model.addAttribute("months", monthService.getAll());
-            return "add";
+            return "redirect:/tasks/add";
         }
 
-        taskService.saveTask(task, userService.findByContext());
+        taskService.saveTask(tasks, userService.findByContext());
 
         return "redirect:/tasks";
     }
@@ -87,26 +95,32 @@ public class TaskManagerController {
 
     @GetMapping("/process_update/{id}")
     public String updatePage(Model model, @PathVariable ("id") int id) throws Exception {
-        model.addAttribute("task", taskService.findById(id));
-        model.addAttribute("month", new Month());
-        model.addAttribute("months", monthService.getAll());
+        model.addAttribute("task", convertToTasksDTO(taskService.findById(id)));
+        model.addAttribute("month", new MonthDTO());
+        model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
         return "updatePage";
     }
 
     @PostMapping("/submit_update")
-    public String submitUpdate(@ModelAttribute ("task") @Valid Tasks tasks,
-                                @ModelAttribute ("month") Month monthWithId, Model model,
+    public String submitUpdate(@ModelAttribute ("task") @Valid TasksDTO tasksDTO,
+                                @ModelAttribute ("month") @Valid MonthDTO monthDTOWithId, Model model,
                                 BindingResult result) throws Exception {
+        Month monthWithId = convertToMonth(monthDTOWithId);
+        Tasks tasks = convertToTasks(tasksDTO);
+
+
+        monthValidator.validate(monthService.findById(monthWithId.getId()), result);
         tasks.setMonth(monthService.findById(monthWithId.getId()));
         taskValidator.validate(tasks, result);
 
         if (result.hasErrors()) {
-            model.addAttribute("task", tasks);
-            model.addAttribute("months", monthService.getAll());
-            return "updatePage";
+            model.addAttribute("task", tasksDTO);
+            model.addAttribute("month", new MonthDTO());
+            model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
+            return "redirect:/tasks/process_update/{" + tasks.getId() + "}";
         }
 
-        taskService.saveTask(tasks, userService.findByContext());
+        taskService.updateTask(tasks, userService.findByContext());
 
         return "redirect:/tasks";
     }
@@ -117,5 +131,21 @@ public class TaskManagerController {
         userService.addCompletedTask(userService.findByContext());
 
         return "redirect:/tasks";
+    }
+
+    private MonthDTO convertToMonthDTO(Month month){
+        return this.modelMapper.map(month, MonthDTO.class);
+    }
+
+    private Month convertToMonth(MonthDTO monthDTO){
+        return this.modelMapper.map(monthDTO, Month.class);
+    }
+
+    private Tasks convertToTasks(TasksDTO tasksDTO){
+        return this.modelMapper.map(tasksDTO, Tasks.class);
+    }
+
+    private TasksDTO convertToTasksDTO(Tasks tasks){
+        return this.modelMapper.map(tasks, TasksDTO.class);
     }
 }
