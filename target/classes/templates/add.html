@@ -17,7 +17,7 @@
     <br/>
 
     <label for="month">Выберите месяц когда надо выполнить цель: </label>
-    <select th:field="*{month}" id="month">
+    <select th:object="${tasks}" th:field="*{month}" id="month">
         <option th:each="month : ${months}" th:value="${month.getId()}"
                 th:text="${month.getMonth()}"></option>
     </select>
@@ -26,7 +26,7 @@
 
     <label for="year">Введите год когда надо выполнить цель: </label>
     <input type="text" th:field="*{year}" id="year">
-    <div style="color: #ff0000" th:if="${#fields.hasErrors('year')}" th:errors="*{tasks.year}">Age errors</div>
+    <div style="color: #ff0000" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Age errors</div>
     <br/>
 
 

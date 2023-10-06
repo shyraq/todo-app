@@ -49,23 +49,20 @@ public class TaskManagerController {
     @GetMapping("/add")
     public String addTask(Model model) {
         model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
-        model.addAttribute("month", new MonthDTO());
         model.addAttribute("tasks", new TasksDTO());
         return "add";
     }
 
     @PostMapping("/add")
-    public String submitTask(@ModelAttribute ("tasks") @Valid TasksDTO tasksDTO,
-                             @ModelAttribute ("month") @Valid MonthDTO monthDTOWithId, Model model,
+    public String submitTask(@ModelAttribute ("tasks") @Valid TasksDTO tasksDTO, Model model,
                              BindingResult result) throws Exception {
         Tasks tasks = convertToTasks(tasksDTO);
-        Month month = convertToMonth(monthDTOWithId);
-        monthValidator.validate(month, result);
-        tasks.setMonth(month);
+        monthValidator.validate(tasks.getMonth(), result);
         taskValidator.validate(tasks, result);
 
         if (result.hasErrors()) {
-            return "redirect:/tasks/add";
+            model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
+            return "add";
         }
 
         taskService.saveTask(tasks, userService.findByContext());
@@ -95,29 +92,21 @@ public class TaskManagerController {
 
     @GetMapping("/process_update/{id}")
     public String updatePage(Model model, @PathVariable ("id") int id) throws Exception {
-        model.addAttribute("task", convertToTasksDTO(taskService.findById(id)));
-        model.addAttribute("month", new MonthDTO());
+        model.addAttribute("tasks", convertToTasksDTO(taskService.findById(id)));
         model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
         return "updatePage";
     }
 
     @PostMapping("/submit_update")
-    public String submitUpdate(@ModelAttribute ("task") @Valid TasksDTO tasksDTO,
-                                @ModelAttribute ("month") @Valid MonthDTO monthDTOWithId, Model model,
+    public String submitUpdate(@ModelAttribute ("tasks") @Valid TasksDTO tasksDTO, Model model,
                                 BindingResult result) throws Exception {
-        Month monthWithId = convertToMonth(monthDTOWithId);
         Tasks tasks = convertToTasks(tasksDTO);
-
-
-        monthValidator.validate(monthService.findById(monthWithId.getId()), result);
-        tasks.setMonth(monthService.findById(monthWithId.getId()));
+        monthValidator.validate(tasks.getMonth(), result);
         taskValidator.validate(tasks, result);
 
         if (result.hasErrors()) {
-            model.addAttribute("task", tasksDTO);
-            model.addAttribute("month", new MonthDTO());
             model.addAttribute("months", monthService.getAll().stream().map(this::convertToMonthDTO).collect(Collectors.toList()));
-            return "redirect:/tasks/process_update/{" + tasks.getId() + "}";
+            return "updatePage";
         }
 
         taskService.updateTask(tasks, userService.findByContext());

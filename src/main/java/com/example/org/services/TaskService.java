@@ -24,13 +24,12 @@ public class TaskService {
     }
 
     public void saveTask(Tasks task, User user){
-        fillTask(task, user);
+        fillToSaveTask(task, user);
         taskRepo.save(task);
     }
 
     public void updateTask(Tasks tasks, User user){
-        tasks.setUser(user);
-        tasks.setAddedAt(taskRepo.findById(tasks.getId()).get().getAddedAt());
+        fillToUpdateTask(tasks, user);
         taskRepo.save(tasks);
     }
 
@@ -63,9 +62,14 @@ public class TaskService {
         throw new Exception("Task not found");
     }
 
-    public void fillTask(Tasks tasks, User user){
+    public void fillToSaveTask(Tasks tasks, User user){
         tasks.setAddedAt(LocalDateTime.now());
         tasks.setUser(user);
-        tasks.setYear(Integer.toString(LocalDateTime.now().getYear()));
+    }
+
+    public void fillToUpdateTask(Tasks tasks, User user){
+        tasks.setUser(user);
+        tasks.setAddedAt(taskRepo.findById(tasks.getId()).get().getAddedAt());
+        tasks.setCompleted(taskRepo.findById(tasks.getId()).get().isCompleted());
     }
 }
